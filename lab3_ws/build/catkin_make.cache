@@ -1,0 +1,2 @@
+lab3
+-DCATKIN_DEVEL_PREFIX=/home/lab3_ws/devel -DCMAKE_INSTALL_PREFIX=/home/lab3_ws/install -G Unix Makefiles
