@@ -1,0 +1,8 @@
+prefix=/home/EE346/lab6_ws/install
+
+Name: laserscan_convertion
+Description: Description of laserscan_convertion
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

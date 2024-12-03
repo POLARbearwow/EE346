@@ -1,0 +1,8 @@
+prefix=/home/EE346/lab6_ws/devel
+
+Name: multi_object_tracking_lidar
+Description: Description of multi_object_tracking_lidar
+Version: 1.0.4
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

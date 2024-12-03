@@ -1,0 +1,8 @@
+prefix=/home/EE346/lab6_ws/devel
+
+Name: cylinder_detection
+Description: Description of cylinder_detection
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

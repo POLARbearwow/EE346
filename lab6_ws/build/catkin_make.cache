@@ -1,0 +1,2 @@
+cylinder_detection:laserscan_convertion:multiple-object-tracking-lidar:state_machine
+-DCATKIN_DEVEL_PREFIX=/home/EE346/lab6_ws/devel -DCMAKE_INSTALL_PREFIX=/home/EE346/lab6_ws/install -G Unix Makefiles

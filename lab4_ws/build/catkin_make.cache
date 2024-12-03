@@ -1,0 +1,2 @@
+lab4
+-DCATKIN_DEVEL_PREFIX=/home/EE346/lab4_ws/devel -DCMAKE_INSTALL_PREFIX=/home/EE346/lab4_ws/install -G Unix Makefiles
