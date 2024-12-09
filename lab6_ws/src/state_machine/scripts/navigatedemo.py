@@ -11,6 +11,7 @@ import time
 import tf
 
 
+
 class NavigateToPoint(smach.State):
     def __init__(self, x, y, frame="map"):
             smach.State.__init__(self, outcomes=['succeeded', 'failed'])
