@@ -13,7 +13,7 @@ angles = []
 x = []
 y = []
 ok = False
-stop_distance = 0.3  # 距离目标质心15厘米时停止
+stop_distance = 0.20  # 距离目标质心15厘米时停止
 
 # 定义回调函数
 def callback(data):
@@ -71,12 +71,12 @@ def listener():
         if data_queue and ok:  # 检查队列中是否有数据
             plt.clf()  # 清除之前的图形
             
-            max_points = 11  # 默认最大点数
-            thred = 0.2  # 默认最大距离
+            max_points = 8  # 默认最大点数
+            thred = 0.06  # 默认最大距离
             
             # 聚类
             points = np.vstack((x, y)).T  # 创建用于聚类的点
-            dbscan = DBSCAN(eps=0.4, min_samples=2)  # 定义DBSCAN聚类
+            dbscan = DBSCAN(eps=0.3, min_samples=2)  # 定义DBSCAN聚类
             labels = dbscan.fit_predict(points)  # 进行聚类
 
             # 统计每个聚类的点数
@@ -91,6 +91,8 @@ def listener():
 
             for cluster in sorted_clusters:  # 遍历从点数最少到最多的聚类
                 label, size = cluster
+                if size >= max_points: 
+                    continue
                 center = np.mean(points[labels == label], axis=0)
                 distance_to_origin = np.linalg.norm(center)  # 计算质心到原点的距离
                 if distance_to_origin <= 1.3:  # 找到第一个满足条件的聚类

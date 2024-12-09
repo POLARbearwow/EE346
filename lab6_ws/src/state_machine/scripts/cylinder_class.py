@@ -18,7 +18,7 @@ class ScanAndMove(smach.State):
         self.x = []
         self.y = []
         self.ok = False
-        self.stop_distance = 0.25 # 修改停止距离为 15 厘米
+        self.stop_distance = 0.20 # 修改停止距离为 15 厘米
         self.velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
         rospy.init_node('scan_listener', anonymous=True)  # 初始化 ROS 节点
