@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-
 #import actionlib.simple_action_client
 import rospy
-import smach
-import smach_ros
 import actionlib
 import math
+import smach
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from geometry_msgs.msg import PoseStamped
@@ -90,16 +87,17 @@ class NavigateToPoint(smach.State):
         rospy.loginfo("等待 move_base 动作服务器...")
         self.client.wait_for_server()
 
-        # 发送导航目标
+        # 发送导航目标  哪里执行发送的？
         if not self.send_goal():
             rospy.logerr("发送目标失败。")
             return 'failure'
 
-        # 等待导航完成或失败
+        # 等待导航完成或失败   要加一个取消导航点吗？
         result = self.move_to_goal()
         if result:
             if self.is_goal_reached():
                 rospy.loginfo("成功到达目标点！")
+                self.cancel_goal()
                 return 'success'
             else:
                 rospy.logerr("未能到达目标点的距离阈值范围内。")
@@ -228,56 +226,3 @@ class NavigateToPoint(smach.State):
 #         pass
 
 # endregion
-
-# 主程序
-def main():
-    rospy.init_node('smach_navigation_with_move_base')
-
-    # 创建状态机
-    #状态的 outcomes（用于transitions到下一个state） 和状态机的 outcomes（整个结果） 不同
-    sm = smach.StateMachine(outcomes=['all_tasks_completed', 'aborted'])
-
-    with sm:
-        # 导航到 A 点
-        smach.StateMachine.add('NAVIGATE_TO_POINT_A',
-                               NavigateToPoint('Point A', 1.0, 2.0),
-                               transitions={'succeeded': 'APPROACH_CYLINDER_AT_A',
-                                            'aborted': 'aborted'})
-
-        # 靠近 A 点的圆柱
-        smach.StateMachine.add('APPROACH_CYLINDER_AT_A',
-                               ApproachCylinder(),
-                               transitions={'succeeded': 'NAVIGATE_TO_POINT_B',
-                                            'aborted': 'aborted'})
-
-        # 导航到 B 点
-        smach.StateMachine.add('NAVIGATE_TO_POINT_B',
-                               NavigateToPoint('Point B', 2.0, 3.0),
-                               transitions={'succeeded': 'APPROACH_CYLINDER_AT_B',
-                                            'aborted': 'aborted'})
-
-        # 靠近 B 点的圆柱
-        smach.StateMachine.add('APPROACH_CYLINDER_AT_B',
-                               ApproachCylinder(),
-                               transitions={'succeeded': 'NAVIGATE_TO_POINT_C',
-                                            'aborted': 'aborted'})
-
-        # 导航到 C 点
-        smach.StateMachine.add('NAVIGATE_TO_POINT_C',
-                               NavigateToPoint('Point C', 3.0, 4.0),
-                               transitions={'succeeded': 'APPROACH_CYLINDER_AT_C',
-                                            'aborted': 'aborted'})
-
-        # 靠近 C 点的圆柱
-        smach.StateMachine.add('APPROACH_CYLINDER_AT_C',
-                               ApproachCylinder(),
-                               transitions={'succeeded': 'all_tasks_completed',
-                                            'aborted': 'aborted'})
-
-    # 执行状态机
-    outcome = sm.execute()
-    rospy.loginfo(f"State Machine finished with outcome: {outcome}")
-
-
-if __name__ == "__main__":
-    main()
