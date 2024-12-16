@@ -14,7 +14,7 @@ class Approachlinder(smach.State):
         self.x = []
         self.y = []
         self.ok = False
-        self.stop_distance = 0.3  # 距离目标质心15厘米时停止
+        self.stop_distance = 0.2  # 距离目标质心15厘米时停止
 
     def callback(self, data):
         self.data_queue = data.ranges

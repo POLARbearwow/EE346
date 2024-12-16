@@ -22,7 +22,7 @@ class ScanAndMove(smach.State):
         self.x = []
         self.y = []
         self.ok = False
-        self.stop_distance = 0.20 # 修改停止距离为 15 厘米
+        self.stop_distance = 0.25 # 修改停止距离为 15 厘米
         self.velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.goal_reached = False
 
@@ -66,7 +66,7 @@ class ScanAndMove(smach.State):
         # 计算角度调整和线速度
         angle_to_goal = np.arctan2(goal_y, goal_x)
         rospy.loginfo(f"Moving to goal: distance={distance_to_goal:.2f}, angle={angle_to_goal:.2f}")    
-        twist.linear.x = min(0.2, distance_to_goal)  # 最大速度0.2米/秒
+        twist.linear.x = min(0.25, distance_to_goal)  # 最大速度0.2米/秒
         twist.angular.z = angle_to_goal * 3.0  # 调整角速度比例增益
         self.velocity_publisher.publish(twist)
         rate.sleep()
@@ -75,7 +75,7 @@ class ScanAndMove(smach.State):
     def execute(self, userdata):
         #if self.data_queue and self.ok:  # 检查队列中是否有数据
             # 聚类部分
-        max_points = 8  # 默认最大点数
+        max_points = 10  # 默认最大点数
         thred = 0.1  # 默认最大距离
         while not self.goal_reached:    
             # 聚类
@@ -108,7 +108,7 @@ class ScanAndMove(smach.State):
                 # 调用移动函数
                 self.goal_reached = self.move_to_goal(selected_center[0], selected_center[1])
                 if self.goal_reached:
-                    time.sleep(3)
+                    time.sleep(2)
                     return 'goal_reached'
             else:
                 print("No cluster within 1.3 meters from the origin was found.")
@@ -207,11 +207,11 @@ def main():
     sm = smach.StateMachine(outcomes=['success', 'failure'])
 
     with sm:
-        smach.StateMachine.add('NavigateToA', NavigateToPoint(1.536, 0.831), transitions={'succeeded': 'ScanAndMoveA', 'failed': 'failure'})
+        smach.StateMachine.add('NavigateToA', NavigateToPoint(1.944, 0.758), transitions={'succeeded': 'ScanAndMoveA', 'failed': 'failure'})
         smach.StateMachine.add('ScanAndMoveA', ScanAndMove(), transitions={'goal_reached': 'NavigateToB', 'no_goal': 'failure'})
-        smach.StateMachine.add('NavigateToB', NavigateToPoint(1.296, 3.649), transitions={'succeeded': 'ScanAndMoveB', 'failed': 'failure'})
+        smach.StateMachine.add('NavigateToB', NavigateToPoint(1.099, 4.093), transitions={'succeeded': 'ScanAndMoveB', 'failed': 'failure'})
         smach.StateMachine.add('ScanAndMoveB', ScanAndMove(), transitions={'goal_reached': 'NavigateToC', 'no_goal': 'failure'})
-        smach.StateMachine.add('NavigateToC', NavigateToPoint(3.606, 3.706), transitions={'succeeded': 'ScanAndMoveC', 'failed': 'failure'})
+        smach.StateMachine.add('NavigateToC', NavigateToPoint(3.397, 3.713), transitions={'succeeded': 'ScanAndMoveC', 'failed': 'failure'})
         smach.StateMachine.add('ScanAndMoveC', ScanAndMove(), transitions={'goal_reached': 'success', 'no_goal': 'failure'})
 
 
